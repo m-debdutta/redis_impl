@@ -7,7 +7,7 @@ class DataBase {
 
   set([key, value]) {
     this.#obj[key] = value;
-    return 'OK';
+    return "OK";
   }
 
   get([key]) {
@@ -23,7 +23,7 @@ class DataBase {
   lpush([key, value]) {
     const list = this.#obj[key];
 
-    if(list) {
+    if (list) {
       list.push(value);
     } else {
       this.#obj[key] = [value];
@@ -37,11 +37,11 @@ class DataBase {
   }
 
   lrange([key, lower, upper]) {
-    if(upper === '-1') {
-      return this.#obj[key]
+    if (upper === "-1") {
+      return this.#obj[key];
     }
     return this.#obj[key].slice(lower, upper);
   }
 }
 
-module.exports = {DataBase};
+module.exports = { DataBase };
