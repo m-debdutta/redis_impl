@@ -10,7 +10,10 @@ const main = () => {
     console.log("Received a connection");
 
     socket.setEncoding("utf-8");
-    socket.on("data", (request) => requestHandler(socket, request, database));
+    socket.on("data", (request) => {
+      const response = requestHandler(request, database);
+      socket.write(response);
+    });
 
     socket.on("end", () => console.log("Disconnected"));
   });

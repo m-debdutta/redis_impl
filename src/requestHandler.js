@@ -65,10 +65,10 @@ const responseGenerator = (crudeResponse) => {
   }
 }
 
-const requestHandler = (socket, request, database) => {
+const requestHandler = (request, database) => {
   const [command, args] = parseRequest(request);
   const crudeResponse = handleCommand(command, args, database);
-  socket.write(responseGenerator(crudeResponse))
+  return responseGenerator(crudeResponse)
 }
 
 module.exports = {requestHandler};
