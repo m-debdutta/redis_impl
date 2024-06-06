@@ -17,7 +17,8 @@ const parseRequest = (request) => {
 const handleCommand = (command, args, database) => {
   switch (command) {
     case 'SET':
-      return database.set(args);
+      database.set(args);
+      return 'OK';
     case 'GET':
       return database.get(args);
     case 'DEL':
@@ -28,6 +29,12 @@ const handleCommand = (command, args, database) => {
       return database.lpop(args);
     case 'LRANGE':
       return database.lrange(args);
+    case 'SADD':
+      return database.sadd(args);
+    case 'SMEMBERS':
+      return database.smembers(args);
+    case 'SREM':
+      return database.srem(args);
     default:
       return 'no such command';
   }
@@ -44,7 +51,7 @@ const responseGenerator = (crudeResponse) => {
     case crudeResponse === 'no such command':
       return RESP_FIRST_BYTE.simpleError + crudeResponse + '\r\n';
 
-    case undefined:
+    case crudeResponse === undefined:
       return RESP_FIRST_BYTE.null + '\r\n';
 
     case typeof crudeResponse === 'number':
