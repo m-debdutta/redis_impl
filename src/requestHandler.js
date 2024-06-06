@@ -1,5 +1,13 @@
 const {chunk} = require("lodash");
 
+const RESP_FIRST_BYTE = {
+  simpleString: '+',
+  simpleError: '-',
+  integers: ':',
+  null: '_',
+  array: '*'
+}
+
 const parseRequest = (request) => {
   const [_, ...tokens] = request.split('\r\n').slice(0, -1);
   const [command, ...args] = chunk(tokens, 2).map(([_, cmdArg]) => cmdArg)
@@ -14,30 +22,39 @@ const handleCommand = (command, args, database) => {
       return database.get(args);
     case 'DEL':
       return database.del(args);
+    case 'LPUSH':
+      return database.lpush(args);
+    case 'LPOP':
+      return database.lpop(args);
+    case 'LRANGE':
+      return database.lrange(args);
     default:
       return 'no such command';
   }
 }
 
-const responseGenerator = (crudeResponse) => {
-  const response = {
-    simpleString: '+',
-    simpleError: '-',
-    integers: ':',
-    null: '_',
-  }
+const generateArrayResponse = (list) => {
+  return RESP_FIRST_BYTE.array +
+    list.length + '\r\n' +
+    list.map(element => responseGenerator(element)).join('');
+}
 
-  switch (crudeResponse) {
-    case 'no such command':
-      return response.simpleError + crudeResponse + '\r\n';
+const responseGenerator = (crudeResponse) => {
+  switch (true) {
+    case crudeResponse === 'no such command':
+      return RESP_FIRST_BYTE.simpleError + crudeResponse + '\r\n';
+
     case undefined:
-      return response.null + '\r\n';
-    case 1:
-      return response.integers + 1 + '\r\n';
-    case 0:
-      return response.integers + 0 + '\r\n';
+      return RESP_FIRST_BYTE.null + '\r\n';
+
+    case typeof crudeResponse === 'number':
+      return RESP_FIRST_BYTE.integers + crudeResponse + '\r\n';
+
+    case crudeResponse instanceof Array:
+      return generateArrayResponse(crudeResponse);
+
     default:
-      return response.simpleString + crudeResponse + '\r\n';
+      return RESP_FIRST_BYTE.simpleString + crudeResponse + '\r\n';
   }
 }
 
