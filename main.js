@@ -1,11 +1,13 @@
 const net = require("node:net");
 const { DataBase } = require("./src/datebase");
 const { requestHandler } = require("./src/requestHandler");
+const { HashTable } = require("./src/hashTable");
 
 const main = () => {
-  const database = new DataBase();
+  const hashTable = new HashTable();
+  const database = new DataBase(hashTable);
   const server = net.createServer();
-  server.listen(8001);
+
   server.on("connection", (socket) => {
     console.log("Received a connection");
 
@@ -17,6 +19,8 @@ const main = () => {
 
     socket.on("end", () => console.log("Disconnected"));
   });
+
+  server.listen(8001);
 };
 
 main();

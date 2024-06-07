@@ -1,71 +1,70 @@
 class DataBase {
-  #obj;
+  #core;
 
-  constructor() {
-    this.#obj = {};
+  constructor(hashTable) {
+    this.#core = hashTable;
   }
 
   set([key, value]) {
-    this.#obj[key] = value;
+    this.#core.set(key, value);
   }
 
-  get([key]) {
-    return this.#obj[key];
+  get(key) {
+    return this.#core.get(key);
   }
 
-  del([key]) {
-    const response = this.#obj[key] ? 1 : 0;
-    delete this.#obj[key];
-    return response;
+  del(key) {
+    return this.#core.del(key);
   }
 
   lpush([key, ...values]) {
-    const list = this.#obj[key];
+    const existedList = this.#core.get(key) || [];
+    const updatedList = [...values.slice().reverse(), ...existedList];
+    this.#core.set(key, updatedList);
 
-    if (list) {
-      values.forEach(value => list.push(value));
-    } else {
-      this.#obj[key] = values;
-    }
-
-    return this.#obj[key].length;
+    return updatedList.length;
   }
 
-  lpop([key]) {
-    return this.#obj[key].pop();
+  lpop(key) {
+    return this.#core.get(key)[0];
   }
 
-  lrange([key, lower, upper]) {
-    if (upper === "-1") {
-      return this.#obj[key];
-    }
-    return this.#obj[key].slice(lower, upper);
+  lrange(key, start, stop) {
+    const list = this.#core.get(key);
+
+    if(!list) return;
+
+    const adjustIndex = (index) => (index < 0 ? list.length + index : index);
+
+    const from = adjustIndex(start);
+    const to = adjustIndex(stop);
+
+    return list.slice(from, to + 1);
   }
 
   sadd([key, ...values]) {
-    const set = this.#obj[key];
+    const set = this.#core.get(key);
 
-    if(!set) {
-      this.#obj[key] = new Set(values);
+    if (!set) {
+      this.#core.set(key, new Set(values));
       return values.length;
     }
 
-    if(values.every(value => set.has(value))) {
-      return 0;
-    }
-
-    if(set) {
-      values.forEach(value => set.add(value));
-      return values.length
-    }
+    //mutability
+    values.forEach((value) => set.add(value));
+    return set.size();
   }
 
   srem([key, value]) {
-    return this.#obj[key].delete(value) ? 1 : 0;
+    return this.#core.get(key).delete(value) ? 1 : 0;
   }
 
-  smembers([key]) {
-    return [...this.#obj[key].values()];
+  sIsMember(key) {
+    return this.#core.get(key).has(key);
+  }
+
+  smembers(key) {
+    return [...this.#core.get(key).values()];
   }
 }
 

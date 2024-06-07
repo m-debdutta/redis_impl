@@ -20,19 +20,20 @@ const handleCommand = (command, args, database) => {
       database.set(args);
       return 'OK';
     case 'GET':
-      return database.get(args);
+      return database.get(args[0]);
     case 'DEL':
-      return database.del(args);
+      return database.del(args[0]);
     case 'LPUSH':
       return database.lpush(args);
     case 'LPOP':
-      return database.lpop(args);
+      return database.lpop(args[0]);
     case 'LRANGE':
-      return database.lrange(args);
+      const [key, start, stop] = args;
+      return database.lrange(key, +start, +stop);
     case 'SADD':
       return database.sadd(args);
     case 'SMEMBERS':
-      return database.smembers(args);
+      return database.smembers(args[0]);
     case 'SREM':
       return database.srem(args);
     default:
