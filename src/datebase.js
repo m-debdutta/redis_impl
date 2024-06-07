@@ -9,11 +9,11 @@ class DataBase {
     this.#db.set(key, value);
   }
 
-  get(key) {
+  get([key]) {
     return this.#db.get(key);
   }
 
-  del(key) {
+  del([key]) {
     return this.#db.del(key);
   }
 
@@ -25,15 +25,14 @@ class DataBase {
     return updatedList.length;
   }
 
-  lpop(key) {
-    //update the list
-    return this.#db.get(key)[0];
+  lpop([key]) {
+    return this.#db.get(key).pop();
   }
 
-  lrange(key, start, stop) {
+  lrange([key, start, stop]) {
     const list = this.#db.get(key);
 
-    if (!list) return;
+    if (!list) return [];
 
     const adjustIndex = (index) => (index < 0 ? list.length + index : index);
 
@@ -61,11 +60,11 @@ class DataBase {
     return this.#db.get(key).delete(value) ? 1 : 0;
   }
 
-  sIsMember(key) {
-    return this.#db.get(key).has(key);
+  sIsMember([key]) {
+    return this.#db.get(key).has(key) ? 1 : 0;
   }
 
-  smembers(key) {
+  smembers([key]) {
     return [...this.#db.get(key).values()];
   }
 }

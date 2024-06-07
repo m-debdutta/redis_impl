@@ -22,22 +22,24 @@ const handleCommand = (command, args, database) => {
       database.set(args);
       return 'OK';
     case 'GET':
-      return database.get(args[0]);
+      return database.get(args);
     case 'DEL':
-      return database.del(args[0]);
+      return database.del(args);
     case 'LPUSH':
       return database.lpush(args);
     case 'LPOP':
-      return database.lpop(args[0]);
+      return database.lpop(args);
     case 'LRANGE':
       const [key, start, stop] = args;
-      return database.lrange(key, +start, +stop);
+      return database.lrange([key, +start, +stop]);
     case 'SADD':
       return database.sadd(args);
     case 'SMEMBERS':
-      return database.smembers(args[0]);
+      return database.smembers(args);
     case 'SREM':
       return database.srem(args);
+    case 'SISMEMBER':
+      return database.sIsMember(args);
     default:
       return 'no such command';
   }
