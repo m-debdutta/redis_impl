@@ -6,11 +6,10 @@ class HashTable {
   }
 
   #rollingHash(str, prime, mod) {
-    return [...str].reduce(
-      (hash, char) => (hash * prime + char.charCodeAt()) % mod,
-      0
-    );
+    return [...str].reduce( (hash, char) => 
+        (hash * prime + char.charCodeAt()) % mod, 0);
   }
+  
   #findBucket(str) {
     return this.#rollingHash(str, 31, 1000000007) % 3;
   }
