@@ -1,17 +1,19 @@
 class HashTable {
   #buckets;
+  #size;
 
-  constructor() {
+  constructor(size = 10) {
     this.#buckets = [];
+    this.#size = size;
   }
 
   #rollingHash(str, prime, mod) {
-    return [...str].reduce( (hash, char) => 
+    return [...str].reduce((hash, char) => 
         (hash * prime + char.charCodeAt()) % mod, 0);
   }
 
   #findBucketId(str) {
-    return this.#rollingHash(str, 31, 1000000007) % 3;
+    return this.#rollingHash(str, 31, 1000000007) % this.#size;
   }
 
   #findEntryIndex(bucket, key) {
