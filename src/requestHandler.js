@@ -8,6 +8,8 @@ const RESP_FIRST_BYTE = {
   array: '*'
 }
 
+const CRLF = '\r\n';
+
 const parseRequest = (request) => {
   const [_, ...tokens] = request.split('\r\n').slice(0, -1);
   const [command, ...args] = chunk(tokens, 2).map(([_, cmdArg]) => cmdArg)
